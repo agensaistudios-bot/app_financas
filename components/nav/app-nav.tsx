@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, List, LogOut, Menu, Wallet } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
+import { ThemeToggle } from "@/components/theme-toggle";
 import {
   Sheet,
   SheetContent,
@@ -19,10 +20,21 @@ const NAV_ITEMS = [
   { href: "/transactions", label: "Transações", icon: List },
 ];
 
-function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
+function NavLinks({
+  onNavigate,
+  orientation = "vertical",
+}: {
+  onNavigate?: () => void;
+  orientation?: "horizontal" | "vertical";
+}) {
   const pathname = usePathname();
   return (
-    <nav className="flex flex-col gap-1">
+    <nav
+      className={cn(
+        "flex gap-1",
+        orientation === "horizontal" ? "flex-row items-center" : "flex-col",
+      )}
+    >
       {NAV_ITEMS.map((item) => {
         const active = pathname === item.href;
         return (
@@ -66,7 +78,7 @@ export function AppNav({ email }: { email: string }) {
             <span>Finanças</span>
           </Link>
           <div className="hidden md:block">
-            <NavLinks />
+            <NavLinks orientation="horizontal" />
           </div>
         </div>
 
@@ -74,6 +86,7 @@ export function AppNav({ email }: { email: string }) {
           <span className="hidden text-sm text-muted-foreground sm:inline">
             {email}
           </span>
+          <ThemeToggle />
           <Button
             variant="ghost"
             size="sm"
@@ -95,6 +108,10 @@ export function AppNav({ email }: { email: string }) {
               <div className="flex flex-col gap-4 px-4 py-4">
                 <span className="text-sm text-muted-foreground">{email}</span>
                 <NavLinks onNavigate={() => setOpen(false)} />
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-muted-foreground">Tema</span>
+                  <ThemeToggle />
+                </div>
                 <Button variant="outline" size="sm" onClick={handleSignOut}>
                   <LogOut className="size-4" />
                   Sair

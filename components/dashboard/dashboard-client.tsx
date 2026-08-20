@@ -46,6 +46,15 @@ export function DashboardClient() {
     return Array.from(totals, ([category, amount]) => ({ category, amount }));
   }, [monthTransactions]);
 
+  const incomeByCategory = useMemo(() => {
+    const totals = new Map<TransactionCategory, number>();
+    for (const t of monthTransactions) {
+      if (t.type !== "receita") continue;
+      totals.set(t.category, (totals.get(t.category) ?? 0) + t.amount);
+    }
+    return Array.from(totals, ([category, amount]) => ({ category, amount }));
+  }, [monthTransactions]);
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -73,7 +82,14 @@ export function DashboardClient() {
       ) : (
         <>
           <SummaryCards income={income} expense={expense} />
-          <CategoryPieChart data={expenseByCategory} />
+          <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+            <CategoryPieChart
+              data={incomeByCategory}
+              title="Receitas por categoria"
+              emptyMessage="Nenhuma receita registrada neste período."
+            />
+            <CategoryPieChart data={expenseByCategory} />
+          </div>
         </>
       )}
     </div>

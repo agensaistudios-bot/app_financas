@@ -31,21 +31,27 @@ function CustomTooltip({
   );
 }
 
-export function CategoryPieChart({ data }: { data: Slice[] }) {
+export function CategoryPieChart({
+  data,
+  title = "Despesas por categoria",
+  emptyMessage = "Nenhuma despesa registrada neste período.",
+}: {
+  data: Slice[];
+  title?: string;
+  emptyMessage?: string;
+}) {
   const total = data.reduce((sum, d) => sum + d.amount, 0);
   const sorted = [...data].sort((a, b) => b.amount - a.amount);
 
   return (
     <Card className="flex flex-col">
       <CardHeader>
-        <CardTitle className="text-base font-medium">
-          Despesas por categoria
-        </CardTitle>
+        <CardTitle className="text-base font-medium">{title}</CardTitle>
       </CardHeader>
       <CardContent>
         {total === 0 ? (
           <p className="py-12 text-center text-sm text-muted-foreground">
-            Nenhuma despesa registrada neste período.
+            {emptyMessage}
           </p>
         ) : (
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
